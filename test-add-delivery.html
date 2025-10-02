@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Add Delivery Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0f172a;
+            color: white;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #475569;
+            border-radius: 5px;
+            background: #334155;
+            color: white;
+        }
+        button {
+            padding: 12px 24px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .success {
+            background: #10b981;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Test Add Delivery Form</h2>
+        <p>This simulates the delivery form that opens when you click "Add New" button:</p>
+        
+        <form id="deliveryForm">
+            <div class="grid">
+                <div class="form-group">
+                    <label for="clientId">Client:</label>
+                    <select id="clientId" name="clientId" required>
+                        <option value="">Select a client</option>
+                        <option value="1">John Doe</option>
+                        <option value="2">Jane Smith</option>
+                        <option value="3">Bob Wilson</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="delivererId">Deliverer:</label>
+                    <select id="delivererId" name="delivererId" required>
+                        <option value="">Select a deliverer</option>
+                        <option value="1">Mike Smith</option>
+                        <option value="2">Sarah Johnson</option>
+                        <option value="3">Tom Brown</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="destination">Destination:</label>
+                    <input type="text" id="destination" name="destination" required placeholder="Enter destination address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="numberOfItems">Number of Items:</label>
+                    <input type="number" id="numberOfItems" name="numberOfItems" min="1" value="1" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select id="status" name="status">
+                        <option value="pending">Pending</option>
+                        <option value="assigned">Assigned</option>
+                        <option value="in-transit">In Transit</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="totalGoodsPrice">Total Goods Price ($):</label>
+                    <input type="number" id="totalGoodsPrice" name="totalGoodsPrice" step="0.01" min="0" required placeholder="0.00">
+                </div>
+                
+                <div class="form-group">
+                    <label for="deliveryFees">Delivery Fees ($):</label>
+                    <input type="number" id="deliveryFees" name="deliveryFees" step="0.01" min="0" required placeholder="0.00">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" name="notes" rows="3" placeholder="Enter any additional notes"></textarea>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <button type="submit">Save Delivery</button>
+                <button type="button" onclick="document.getElementById('deliveryForm').reset()">Reset Form</button>
+            </div>
+        </form>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById('deliveryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            // Simulate API call
+            setTimeout(() => {
+                document.getElementById('result').innerHTML = 
+                    '<div class="success">Delivery created successfully!<br>' +
+                    'Client: ' + data.clientId + '<br>' +
+                    'Deliverer: ' + data.delivererId + '<br>' +
+                    'Destination: ' + data.destination + '<br>' +
+                    'Items: ' + data.numberOfItems + '<br>' +
+                    'Total Price: $' + data.totalGoodsPrice + '<br>' +
+                    'Delivery Fees: $' + data.deliveryFees + '<br>' +
+                    'Status: ' + data.status + '</div>';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
