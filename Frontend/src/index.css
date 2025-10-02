@@ -137,9 +137,192 @@ code {
   @apply bg-dark-800 rounded-lg shadow-lg overflow-hidden;
 }
 
+/* Gradient card styles */
+.gradient-card-blue {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+.gradient-card-green {
+  background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+}
+
+.gradient-card-purple {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+}
+
+.gradient-card-yellow {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.gradient-card-orange {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+}
+
+/* Enhanced hover effects */
+.card-hover {
+  @apply transform transition-all duration-300 ease-in-out;
+}
+
+.card-hover:hover {
+  @apply scale-105 shadow-2xl;
+}
+
+/* Form input styles for better visibility */
+.form-input {
+  @apply bg-white text-gray-900 placeholder-gray-500 border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+}
+
+.form-input:focus {
+  @apply ring-2 ring-primary-500 border-transparent;
+}
+
+.form-input::placeholder {
+  @apply text-gray-500;
+}
+
+/* Ensure text is always visible in form inputs */
+input[type="text"], 
+input[type="number"], 
+textarea, 
+select {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+input[type="text"]::placeholder, 
+input[type="number"]::placeholder, 
+textarea::placeholder {
+  color: #6b7280 !important;
+}
+
 /* Table styles */
 .table-responsive {
   @apply overflow-x-auto;
+}
+
+/* Professional table styling */
+.professional-table {
+  @apply shadow-2xl border-0;
+}
+
+.professional-table thead {
+  @apply bg-gradient-to-r from-gray-800 to-gray-900;
+}
+
+.professional-table tbody tr {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.professional-table tbody tr:hover {
+  @apply shadow-lg transform scale-[1.01];
+}
+
+/* Row gradient animations */
+.row-gradient-1 {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.row-gradient-2 {
+  background: linear-gradient(135deg, #fdf4ff 0%, #fae8ff 100%);
+}
+
+.row-gradient-3 {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.row-gradient-4 {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.row-gradient-5 {
+  background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%);
+}
+
+.row-gradient-6 {
+  background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+}
+
+.row-gradient-7 {
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+}
+
+.row-gradient-8 {
+  background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+}
+
+/* Status badges */
+.status-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-bold shadow-sm border;
+}
+
+.status-pending {
+  @apply bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border-yellow-300;
+}
+
+.status-assigned {
+  @apply bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border-blue-300;
+}
+
+.status-in-transit {
+  @apply bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border-orange-300;
+}
+
+.status-delivered {
+  @apply bg-gradient-to-r from-green-100 to-green-200 text-green-800 border-green-300;
+}
+
+.status-cancelled {
+  @apply bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-red-300;
+}
+
+/* Avatar styling */
+.avatar-client {
+  @apply h-10 w-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center;
+}
+
+.avatar-deliverer {
+  @apply h-8 w-8 rounded-full bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center;
+}
+
+/* Action buttons */
+.action-btn {
+  @apply p-2 rounded-lg transition-all duration-200 hover:shadow-lg hover:scale-110;
+}
+
+.action-btn-edit {
+  @apply bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white;
+}
+
+.action-btn-delete {
+  @apply bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white;
+}
+
+/* Price styling */
+.price-total {
+  @apply text-sm font-bold text-green-600 bg-green-50 rounded-lg px-3 py-2 inline-block;
+}
+
+.price-fees {
+  @apply text-sm font-bold text-blue-600 bg-blue-50 rounded-lg px-3 py-2 inline-block;
+}
+
+/* Item count styling */
+.item-count {
+  @apply text-sm font-semibold text-gray-900 bg-gray-100 rounded-full px-3 py-1 inline-block;
+}
+
+/* Location styling */
+.location {
+  @apply text-sm text-gray-700 max-w-xs truncate bg-gray-50 rounded-lg px-3 py-2;
+}
+
+/* Serial number styling */
+.serial-number {
+  @apply bg-gradient-to-r from-gray-600 to-gray-700 text-white font-bold text-sm rounded-full h-8 w-8 flex items-center justify-center shadow-lg;
+}
+
+.serial-number:hover {
+  @apply from-gray-700 to-gray-800 shadow-xl transform scale-110;
 }
 
 .table {

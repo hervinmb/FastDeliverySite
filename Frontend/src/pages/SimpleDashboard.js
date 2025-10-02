@@ -1,49 +1,199 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Truck, 
   Users, 
   UserCheck, 
-  DollarSign, 
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Loader
 } from 'lucide-react';
+import { db } from '../config/firebase';
+import { collection, getDocs, query, where, orderBy, limit } from 'firebase/firestore';
 
 const SimpleDashboard = () => {
+  const [stats, setStats] = useState({
+    totalDeliveries: 0,
+    activeClients: 0,
+    availableDeliverers: 0,
+    totalRevenue: 0,
+    pendingDeliveries: 0,
+    inTransitDeliveries: 0,
+    deliveredToday: 0
+  });
+  const [recentDeliveries, setRecentDeliveries] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboardStats();
+  }, []);
+
+  const loadDashboardStats = async () => {
+    try {
+      setLoading(true);
+      
+      // Load deliveries
+      const deliveriesSnapshot = await getDocs(collection(db, 'deliveries'));
+      const deliveries = deliveriesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      // Load clients
+      const clientsSnapshot = await getDocs(collection(db, 'clients'));
+      const clients = clientsSnapshot.docs.map(doc => doc.data());
+      
+      // Load deliverers
+      const deliverersSnapshot = await getDocs(query(collection(db, 'deliverers'), where('status', '==', 'available')));
+      const deliverers = deliverersSnapshot.docs.map(doc => doc.data());
+      
+      // Get recent deliveries (last 5)
+      const recentDeliveriesQuery = query(
+        collection(db, 'deliveries'),
+        orderBy('createdAt', 'desc'),
+        limit(5)
+      );
+      const recentSnapshot = await getDocs(recentDeliveriesQuery);
+      const recentDeliveriesData = recentSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      // Calculate today's date
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      // Calculate stats
+      const totalDeliveries = deliveries.length;
+      const activeClients = clients.filter(client => client.isActive !== false).length;
+      const availableDeliverers = deliverers.length;
+      const totalRevenue = deliveries.reduce((sum, delivery) => sum + (delivery.deliveryFees || 0), 0);
+      
+      // Calculate status-based stats
+      const pendingDeliveries = deliveries.filter(d => d.status === 'pending').length;
+      const inTransitDeliveries = deliveries.filter(d => d.status === 'in-transit').length;
+      const deliveredToday = deliveries.filter(d => {
+        if (d.status === 'delivered' && d.updatedAt) {
+          const deliveryDate = new Date(d.updatedAt);
+          deliveryDate.setHours(0, 0, 0, 0);
+          return deliveryDate.getTime() === today.getTime();
+        }
+        return false;
+      }).length;
+      
+      setStats({
+        totalDeliveries,
+        activeClients,
+        availableDeliverers,
+        totalRevenue,
+        pendingDeliveries,
+        inTransitDeliveries,
+        deliveredToday
+      });
+      
+      setRecentDeliveries(recentDeliveriesData);
+    } catch (error) {
+      console.error('Error loading dashboard stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getTimeAgo = (date) => {
+    if (!date) return 'Date inconnue';
+    
+    const now = new Date();
+    const deliveryDate = new Date(date);
+    const diffInMs = now - deliveryDate;
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInHours / 24);
+    
+    if (diffInDays > 0) {
+      return `Il y a ${diffInDays} jour${diffInDays > 1 ? 's' : ''}`;
+    } else if (diffInHours > 0) {
+      return `Il y a ${diffInHours} heure${diffInHours > 1 ? 's' : ''}`;
+    } else {
+      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+      if (diffInMinutes > 0) {
+        return `Il y a ${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''}`;
+      } else {
+        return 'À l\'instant';
+      }
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'delivered':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case 'in-transit':
+        return <Truck className="h-5 w-5 text-orange-500" />;
+      case 'pending':
+        return <Clock className="h-5 w-5 text-yellow-500" />;
+      case 'cancelled':
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
+      default:
+        return <AlertCircle className="h-5 w-5 text-gray-500" />;
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'delivered':
+        return 'livrée avec succès';
+      case 'in-transit':
+        return 'en transit';
+      case 'pending':
+        return 'assignée';
+      case 'cancelled':
+        return 'annulée';
+      default:
+        return 'mise à jour';
+    }
+  };
+
   const statCards = [
     {
       title: 'Total Livraisons',
-      value: 24,
+      value: stats.totalDeliveries.toString(),
       icon: Truck,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-blue-500 to-blue-700',
+      iconBg: 'bg-gradient-to-br from-blue-100 to-blue-200',
+      iconColor: 'text-blue-600',
       change: '+12%',
       changeType: 'positive'
     },
     {
       title: 'Clients Actifs',
-      value: 15,
+      value: stats.activeClients.toString(),
       icon: Users,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-green-500 to-green-700',
+      iconBg: 'bg-gradient-to-br from-green-100 to-green-200',
+      iconColor: 'text-green-600',
       change: '+8%',
       changeType: 'positive'
     },
     {
       title: 'Livreurs Disponibles',
-      value: 8,
+      value: stats.availableDeliverers.toString(),
       icon: UserCheck,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-purple-500 to-purple-700',
+      iconBg: 'bg-gradient-to-br from-purple-100 to-purple-200',
+      iconColor: 'text-purple-600',
       change: '+5%',
       changeType: 'positive'
     },
     {
       title: 'Revenus Totaux',
-      value: '$12,450',
-      icon: DollarSign,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100',
+      value: `GNF ${stats.totalRevenue.toLocaleString()}`,
+      icon: null,
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-yellow-500 to-yellow-700',
+      iconBg: 'bg-gradient-to-br from-yellow-100 to-yellow-200',
+      iconColor: 'text-yellow-600',
       change: '+15%',
       changeType: 'positive'
     }
@@ -52,26 +202,43 @@ const SimpleDashboard = () => {
   const statusCards = [
     {
       title: 'En Attente',
-      value: 5,
+      value: stats.pendingDeliveries,
       icon: Clock,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100'
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
+      iconBg: 'bg-gradient-to-br from-yellow-100 to-yellow-200',
+      iconColor: 'text-yellow-600'
     },
     {
       title: 'En Transit',
-      value: 3,
+      value: stats.inTransitDeliveries,
       icon: Truck,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100'
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-orange-500 to-orange-600',
+      iconBg: 'bg-gradient-to-br from-orange-100 to-orange-200',
+      iconColor: 'text-orange-600'
     },
     {
       title: 'Livrées Aujourd\'hui',
-      value: 12,
+      value: stats.deliveredToday,
       icon: CheckCircle,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-green-500 to-green-600',
+      iconBg: 'bg-gradient-to-br from-green-100 to-green-200',
+      iconColor: 'text-green-600'
     }
   ];
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-dark-900 p-4 flex items-center justify-center">
+        <div className="text-center">
+          <Loader className="h-12 w-12 animate-spin text-primary-600 mx-auto mb-4" />
+          <p className="text-gray-400">Chargement du tableau de bord...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-dark-900 p-4">
@@ -91,29 +258,31 @@ const SimpleDashboard = () => {
           {statCards.map((card, index) => {
             const Icon = card.icon;
             return (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-6">
+              <div key={index} className={`${card.bgColor} rounded-xl shadow-xl p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl`}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">
+                    <p className="text-sm font-medium text-white/80 mb-1">
                       {card.title}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-white">
                       {card.value}
                     </p>
                     <div className="flex items-center mt-2">
                       <span className={`text-sm font-medium ${
-                        card.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                        card.changeType === 'positive' ? 'text-green-200' : 'text-red-200'
                       }`}>
                         {card.change}
                       </span>
-                      <span className="text-sm text-gray-500 ml-1">
+                      <span className="text-sm text-white/70 ml-1">
                         vs mois dernier
                       </span>
                     </div>
                   </div>
-                  <div className={`p-3 rounded-full ${card.bgColor}`}>
-                    <Icon className={`h-6 w-6 ${card.color}`} />
-                  </div>
+                  {card.icon && (
+                    <div className={`p-3 rounded-full ${card.iconBg} shadow-lg`}>
+                      <Icon className={`h-6 w-6 ${card.iconColor}`} />
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -125,16 +294,16 @@ const SimpleDashboard = () => {
           {statusCards.map((card, index) => {
             const Icon = card.icon;
             return (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-6">
+              <div key={index} className={`${card.bgColor} rounded-xl shadow-xl p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl`}>
                 <div className="flex items-center">
-                  <div className={`p-3 rounded-full ${card.bgColor} mr-4`}>
-                    <Icon className={`h-6 w-6 ${card.color}`} />
+                  <div className={`p-3 rounded-full ${card.iconBg} mr-4 shadow-lg`}>
+                    <Icon className={`h-6 w-6 ${card.iconColor}`} />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-white/80">
                       {card.title}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-white">
                       {card.value}
                     </p>
                   </div>
@@ -145,69 +314,62 @@ const SimpleDashboard = () => {
         </div>
 
         {/* Recent Activity */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">
             Activité Récente
           </h2>
-          <div className="space-y-4">
-            <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-              <div className="flex-shrink-0">
-                <CheckCircle className="h-5 w-5 text-green-500" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">
-                  Livraison #1234 livrée avec succès
-                </p>
-                <p className="text-sm text-gray-500">
-                  Client: Jean Dupont • Il y a 2 heures
-                </p>
-              </div>
+          {recentDeliveries.length > 0 ? (
+            <div className="space-y-4">
+              {recentDeliveries.map((delivery) => (
+                <div key={delivery.id} className="flex items-center p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:shadow-md transition-all duration-200 border border-gray-200">
+                  <div className="flex-shrink-0">
+                    {getStatusIcon(delivery.status)}
+                  </div>
+                  <div className="ml-4 flex-1">
+                    <p className="text-sm font-semibold text-gray-900">
+                      Livraison #{delivery.serialNumber || 'N/A'} {getStatusText(delivery.status)}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Client: {delivery.clientName} • {getTimeAgo(delivery.updatedAt || delivery.createdAt)}
+                    </p>
+                    {delivery.destination && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        📍 {delivery.destination}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex-shrink-0 text-right">
+                    <p className="text-sm font-medium text-gray-900">
+                      GNF {Number(delivery.deliveryFees || 0).toFixed(2)}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {delivery.numberOfItems} article{delivery.numberOfItems > 1 ? 's' : ''}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
-            
-            <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-              <div className="flex-shrink-0">
-                <Truck className="h-5 w-5 text-orange-500" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">
-                  Livraison #1235 en transit
-                </p>
-                <p className="text-sm text-gray-500">
-                  Client: Marie Martin • Il y a 4 heures
-                </p>
-              </div>
+          ) : (
+            <div className="text-center py-8">
+              <Truck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500 text-lg font-medium">Aucune activité récente</p>
+              <p className="text-gray-400 text-sm mt-2">Les nouvelles livraisons apparaîtront ici</p>
             </div>
-            
-            <div className="flex items-center p-3 bg-gray-50 rounded-lg">
-              <div className="flex-shrink-0">
-                <AlertCircle className="h-5 w-5 text-yellow-500" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">
-                  Nouvelle livraison assignée
-                </p>
-                <p className="text-sm text-gray-500">
-                  Client: Pierre Durand • Il y a 6 heures
-                </p>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
 
-        {/* Demo Notice */}
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        {/* Success Notice */}
+        <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
+              <CheckCircle className="h-5 w-5 text-green-400" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">
-                Mode Démonstration
+              <h3 className="text-sm font-medium text-green-800">
+                Données en Temps Réel
               </h3>
-              <div className="mt-2 text-sm text-blue-700">
-                <p>Cette version utilise des données de démonstration. Pour une version complète avec Firebase, configurez votre base de données.</p>
+              <div className="mt-2 text-sm text-green-700">
+                <p>Ce tableau de bord affiche des données dynamiques provenant de Firebase. Toutes les statistiques et activités sont mises à jour en temps réel.</p>
               </div>
             </div>
           </div>

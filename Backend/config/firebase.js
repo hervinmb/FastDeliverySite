@@ -50,10 +50,22 @@ const auth = admin.auth();
 // Test Firebase connection
 const testConnection = async () => {
   try {
-    await db.collection('test').doc('test').get();
+    // Try to access a collection to test connection
+    // We'll use a simple query that doesn't require the collection to exist
+    await db.collection('_test_connection').limit(1).get();
     console.log('✅ Firebase Firestore connection successful');
   } catch (error) {
     console.error('❌ Firebase Firestore connection failed:', error.message);
+    console.error('Error details:', error.code, error.details);
+    
+    // Provide helpful error messages
+    if (error.code === 5) {
+      console.error('💡 This usually means:');
+      console.error('   1. Firebase project does not exist');
+      console.error('   2. Firestore is not enabled for this project');
+      console.error('   3. Service account credentials are invalid');
+      console.error('   4. Wrong project ID in configuration');
+    }
   }
 };
 

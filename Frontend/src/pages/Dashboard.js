@@ -5,7 +5,6 @@ import {
   Truck, 
   Users, 
   UserCheck, 
-  DollarSign, 
   Clock,
   CheckCircle,
   AlertCircle
@@ -53,8 +52,10 @@ const Dashboard = () => {
       title: 'Total Livraisons',
       value: stats?.totalDeliveries || 0,
       icon: Truck,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-100',
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-blue-500 to-blue-700',
+      iconBg: 'bg-gradient-to-br from-blue-100 to-blue-200',
+      iconColor: 'text-blue-600',
       change: '+12%',
       changeType: 'positive'
     },
@@ -62,8 +63,10 @@ const Dashboard = () => {
       title: 'Clients Actifs',
       value: stats?.totalClients || 0,
       icon: Users,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100',
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-green-500 to-green-700',
+      iconBg: 'bg-gradient-to-br from-green-100 to-green-200',
+      iconColor: 'text-green-600',
       change: '+8%',
       changeType: 'positive'
     },
@@ -71,17 +74,21 @@ const Dashboard = () => {
       title: 'Livreurs Disponibles',
       value: stats?.activeDeliverers || 0,
       icon: UserCheck,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100',
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-purple-500 to-purple-700',
+      iconBg: 'bg-gradient-to-br from-purple-100 to-purple-200',
+      iconColor: 'text-purple-600',
       change: '+5%',
       changeType: 'positive'
     },
     {
       title: 'Revenus Totaux',
-      value: `$${(stats?.totalRevenue || 0).toLocaleString()}`,
-      icon: DollarSign,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100',
+      value: `GNF ${(stats?.totalRevenue || 0).toLocaleString()}`,
+      icon: null,
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-yellow-500 to-yellow-700',
+      iconBg: 'bg-gradient-to-br from-yellow-100 to-yellow-200',
+      iconColor: 'text-yellow-600',
       change: '+15%',
       changeType: 'positive'
     }
@@ -92,22 +99,28 @@ const Dashboard = () => {
       title: 'En Attente',
       value: stats?.pendingDeliveries || 0,
       icon: Clock,
-      color: 'text-yellow-600',
-      bgColor: 'bg-yellow-100'
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-yellow-500 to-yellow-600',
+      iconBg: 'bg-gradient-to-br from-yellow-100 to-yellow-200',
+      iconColor: 'text-yellow-600'
     },
     {
       title: 'En Transit',
       value: stats?.inTransitDeliveries || 0,
       icon: Truck,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-100'
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-orange-500 to-orange-600',
+      iconBg: 'bg-gradient-to-br from-orange-100 to-orange-200',
+      iconColor: 'text-orange-600'
     },
     {
       title: 'Livrées Aujourd\'hui',
       value: stats?.deliveredToday || 0,
       icon: CheckCircle,
-      color: 'text-green-600',
-      bgColor: 'bg-green-100'
+      color: 'text-white',
+      bgColor: 'bg-gradient-to-br from-green-500 to-green-600',
+      iconBg: 'bg-gradient-to-br from-green-100 to-green-200',
+      iconColor: 'text-green-600'
     }
   ];
 
@@ -137,29 +150,31 @@ const Dashboard = () => {
           {statCards.map((card, index) => {
             const Icon = card.icon;
             return (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-6">
+              <div key={index} className={`${card.bgColor} rounded-xl shadow-xl p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl`}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">
+                    <p className="text-sm font-medium text-white/80 mb-1">
                       {card.title}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-white">
                       {card.value}
                     </p>
                     <div className="flex items-center mt-2">
                       <span className={`text-sm font-medium ${
-                        card.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                        card.changeType === 'positive' ? 'text-green-200' : 'text-red-200'
                       }`}>
                         {card.change}
                       </span>
-                      <span className="text-sm text-gray-500 ml-1">
+                      <span className="text-sm text-white/70 ml-1">
                         vs mois dernier
                       </span>
                     </div>
                   </div>
-                  <div className={`p-3 rounded-full ${card.bgColor}`}>
-                    <Icon className={`h-6 w-6 ${card.color}`} />
-                  </div>
+                  {card.icon && (
+                    <div className={`p-3 rounded-full ${card.iconBg} shadow-lg`}>
+                      <Icon className={`h-6 w-6 ${card.iconColor}`} />
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -171,16 +186,16 @@ const Dashboard = () => {
           {statusCards.map((card, index) => {
             const Icon = card.icon;
             return (
-              <div key={index} className="bg-white rounded-lg shadow-lg p-6">
+              <div key={index} className={`${card.bgColor} rounded-xl shadow-xl p-6 transform hover:scale-105 transition-all duration-300 hover:shadow-2xl`}>
                 <div className="flex items-center">
-                  <div className={`p-3 rounded-full ${card.bgColor} mr-4`}>
-                    <Icon className={`h-6 w-6 ${card.color}`} />
+                  <div className={`p-3 rounded-full ${card.iconBg} mr-4 shadow-lg`}>
+                    <Icon className={`h-6 w-6 ${card.iconColor}`} />
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-600">
+                    <p className="text-sm font-medium text-white/80">
                       {card.title}
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-bold text-white">
                       {card.value}
                     </p>
                   </div>

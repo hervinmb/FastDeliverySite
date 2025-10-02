@@ -36,6 +36,7 @@ app.use(morgan('combined'));
 
 // Routes
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/categories', require('./routes/categories'));
 app.use('/api/clients', require('./routes/clients'));
 app.use('/api/deliverers', require('./routes/deliverers'));
 app.use('/api/deliveries', require('./routes/deliveries'));
@@ -47,6 +48,36 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
     version: '1.0.0'
   });
+});
+
+// Public test endpoint (no auth required)
+app.get('/api/test', async (req, res) => {
+  try {
+    const { db } = require('./config/firebase');
+    
+    // Test Firestore connection
+    const testDoc = await db.collection('_test').doc('public').set({
+      test: true,
+      timestamp: new Date()
+    });
+    
+    const testRead = await testDoc.get();
+    
+    // Clean up
+    await db.collection('_test').doc('public').delete();
+    
+    res.json({
+      status: 'Firebase connection working',
+      timestamp: new Date().toISOString(),
+      firestore: 'OK'
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'Firebase connection failed',
+      error: error.message,
+      code: error.code
+    });
+  }
 });
 
 // Error handling middleware

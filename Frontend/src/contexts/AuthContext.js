@@ -1,6 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../config/firebase';
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged,
+  updateProfile as updateFirebaseProfile
+} from 'firebase/auth';
+import { db } from '../config/firebase';
+import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 
@@ -23,40 +31,64 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       
-      // For now, create a mock user for testing
-      const mockUser = {
-        uid: 'test-user-123',
-        email: email,
-        displayName: 'Test User',
-        role: 'admin',
-        isActive: true,
-        createdAt: new Date(),
-        lastLoginAt: new Date()
-      };
-      
-      setUser(mockUser);
-      toast.success('Connexion réussie (Mode Test)');
-      return mockUser;
-      
-      // Uncomment when Firebase is properly configured:
-      /*
+      // Sign in with Firebase Auth
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const idToken = await userCredential.user.getIdToken();
+      const firebaseUser = userCredential.user;
       
-      // Get user profile from backend
-      const response = await axios.get('/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${idToken}`
-        }
-      });
+      // Get user profile from Firestore
+      const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
       
-      setUser(response.data);
-      toast.success('Connexion réussie');
-      return response.data;
-      */
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        const userProfile = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName || userData.displayName,
+          role: userData.role || 'client',
+          isActive: userData.isActive !== false,
+          createdAt: userData.createdAt,
+          lastLoginAt: new Date()
+        };
+        
+        // Update last login time
+        await updateDoc(doc(db, 'users', firebaseUser.uid), {
+          lastLoginAt: new Date()
+        });
+        
+        setUser(userProfile);
+        toast.success('Connexion réussie');
+        return userProfile;
+      } else {
+        // Create user profile if it doesn't exist
+        const newUserProfile = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName || 'Utilisateur',
+          role: 'client',
+          isActive: true,
+          createdAt: new Date(),
+          lastLoginAt: new Date()
+        };
+        
+        await setDoc(doc(db, 'users', firebaseUser.uid), newUserProfile);
+        setUser(newUserProfile);
+        toast.success('Connexion réussie');
+        return newUserProfile;
+      }
     } catch (error) {
       console.error('Login error:', error);
-      const errorMessage = error.response?.data?.error || 'Erreur de connexion';
+      let errorMessage = 'Erreur de connexion';
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = 'Aucun compte trouvé avec cet email';
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = 'Mot de passe incorrect';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Email invalide';
+      } else if (error.code === 'auth/too-many-requests') {
+        errorMessage = 'Trop de tentatives. Réessayez plus tard';
+      }
+      
       toast.error(errorMessage);
       throw error;
     } finally {
@@ -69,30 +101,52 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true);
       
-      // For now, create a mock user for testing
-      const mockUser = {
-        uid: 'test-user-' + Date.now(),
-        email: userData.email,
-        displayName: userData.displayName,
+      // Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, userData.email, userData.password);
+      const firebaseUser = userCredential.user;
+      
+      // Update Firebase profile with display name
+      if (userData.displayName) {
+        await updateFirebaseProfile(firebaseUser, {
+          displayName: userData.displayName
+        });
+      }
+      
+      // Create user profile in Firestore
+      const userProfile = {
+        uid: firebaseUser.uid,
+        email: firebaseUser.email,
+        displayName: userData.displayName || 'Utilisateur',
         role: userData.role || 'client',
         isActive: true,
         createdAt: new Date(),
         lastLoginAt: null
       };
       
-      setUser(mockUser);
-      toast.success('Compte créé avec succès (Mode Test)');
-      return mockUser;
-      
-      // Uncomment when backend is running:
-      /*
-      const response = await axios.post('/api/auth/register', userData);
-      toast.success('Compte créé avec succès');
-      return response.data;
-      */
+      try {
+        await setDoc(doc(db, 'users', firebaseUser.uid), userProfile);
+        setUser(userProfile);
+        toast.success('Compte créé avec succès');
+        return userProfile;
+      } catch (firestoreError) {
+        console.error('Error creating user profile in Firestore:', firestoreError);
+        // Even if Firestore fails, the Firebase Auth user was created successfully
+        setUser(userProfile);
+        toast.success('Compte créé avec succès (profil temporaire)');
+        return userProfile;
+      }
     } catch (error) {
       console.error('Register error:', error);
-      const errorMessage = error.response?.data?.error || 'Erreur lors de la création du compte';
+      let errorMessage = 'Erreur lors de la création du compte';
+      
+      if (error.code === 'auth/email-already-in-use') {
+        errorMessage = 'Un compte existe déjà avec cet email';
+      } else if (error.code === 'auth/invalid-email') {
+        errorMessage = 'Email invalide';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'Le mot de passe doit contenir au moins 6 caractères';
+      }
+      
       toast.error(errorMessage);
       throw error;
     } finally {
@@ -115,19 +169,38 @@ export const AuthProvider = ({ children }) => {
   // Update user profile
   const updateProfile = async (userData) => {
     try {
-      const idToken = await auth.currentUser.getIdToken();
-      const response = await axios.put('/api/auth/me', userData, {
-        headers: {
-          Authorization: `Bearer ${idToken}`
-        }
+      if (!auth.currentUser) {
+        throw new Error('Utilisateur non connecté');
+      }
+      
+      // Update Firebase profile
+      if (userData.displayName) {
+        await updateFirebaseProfile(auth.currentUser, {
+          displayName: userData.displayName
+        });
+      }
+      
+      // Update Firestore profile
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      await updateDoc(userRef, {
+        displayName: userData.displayName,
+        role: userData.role,
+        updatedAt: new Date()
       });
       
-      setUser(response.data);
+      // Update local state
+      const updatedUser = {
+        ...user,
+        displayName: userData.displayName,
+        role: userData.role
+      };
+      setUser(updatedUser);
+      
       toast.success('Profil mis à jour avec succès');
-      return response.data;
+      return updatedUser;
     } catch (error) {
       console.error('Update profile error:', error);
-      const errorMessage = error.response?.data?.error || 'Erreur lors de la mise à jour du profil';
+      const errorMessage = error.message || 'Erreur lors de la mise à jour du profil';
       toast.error(errorMessage);
       throw error;
     }
@@ -138,16 +211,60 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          const idToken = await firebaseUser.getIdToken();
-          const response = await axios.get('/api/auth/me', {
-            headers: {
-              Authorization: `Bearer ${idToken}`
-            }
-          });
-          setUser(response.data);
+          // Get user profile from Firestore
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            const userProfile = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName || userData.displayName,
+              role: userData.role || 'client',
+              isActive: userData.isActive !== false,
+              createdAt: userData.createdAt,
+              lastLoginAt: userData.lastLoginAt
+            };
+            setUser(userProfile);
+          } else {
+            // Create user profile if it doesn't exist
+            const newUserProfile = {
+              uid: firebaseUser.uid,
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName || 'Utilisateur',
+              role: 'client',
+              isActive: true,
+              createdAt: new Date(),
+              lastLoginAt: null
+            };
+            
+            await setDoc(doc(db, 'users', firebaseUser.uid), newUserProfile);
+            setUser(newUserProfile);
+          }
         } catch (error) {
           console.error('Error fetching user profile:', error);
-          setUser(null);
+          // If it's a permissions error, try to create the user profile
+          if (error.code === 'permission-denied') {
+            try {
+              const newUserProfile = {
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                displayName: firebaseUser.displayName || 'Utilisateur',
+                role: 'client',
+                isActive: true,
+                createdAt: new Date(),
+                lastLoginAt: null
+              };
+              
+              await setDoc(doc(db, 'users', firebaseUser.uid), newUserProfile);
+              setUser(newUserProfile);
+            } catch (createError) {
+              console.error('Error creating user profile:', createError);
+              setUser(null);
+            }
+          } else {
+            setUser(null);
+          }
         }
       } else {
         setUser(null);

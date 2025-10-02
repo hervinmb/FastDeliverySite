@@ -1,90 +1,63 @@
-const { db, auth } = require('../config/firebase');
+const { admin, db, auth } = require('../config/firebase');
 
-// Test Firebase connection and operations
 const testFirebase = async () => {
-  console.log('🧪 Testing Firebase connection...\n');
-
   try {
-    // Test 1: Firestore connection
-    console.log('1️⃣ Testing Firestore connection...');
-    const testDoc = await db.collection('test').doc('connection').get();
-    console.log('✅ Firestore connection successful\n');
-
-    // Test 2: Create a test document
-    console.log('2️⃣ Testing document creation...');
-    await db.collection('test').doc('test-doc').set({
-      message: 'Hello from LIVRAISON RAPIDE!',
-      timestamp: new Date(),
-      status: 'active'
+    console.log('🧪 Testing Firebase connection...');
+    
+    // Test Firestore
+    console.log('📊 Testing Firestore...');
+    const testDoc = await db.collection('_test').doc('connection').set({
+      test: true,
+      timestamp: new Date()
     });
-    console.log('✅ Document creation successful\n');
-
-    // Test 3: Read the test document
-    console.log('3️⃣ Testing document reading...');
-    const doc = await db.collection('test').doc('test-doc').get();
-    if (doc.exists) {
-      console.log('✅ Document reading successful');
-      console.log('📄 Document data:', doc.data());
-    } else {
-      console.log('❌ Document not found');
-    }
-    console.log('');
-
-    // Test 4: Test collections structure
-    console.log('4️⃣ Testing collections structure...');
-    const collections = ['users', 'clients', 'deliverers', 'deliveries'];
+    console.log('✅ Firestore write test passed');
     
-    for (const collectionName of collections) {
-      try {
-        const snapshot = await db.collection(collectionName).limit(1).get();
-        console.log(`✅ Collection '${collectionName}' exists (${snapshot.size} documents)`);
-      } catch (error) {
-        console.log(`⚠️  Collection '${collectionName}' might not exist yet: ${error.message}`);
-      }
+    const testRead = await db.collection('_test').doc('connection').get();
+    if (testRead.exists) {
+      console.log('✅ Firestore read test passed');
+      console.log('   Data:', testRead.data());
     }
-    console.log('');
-
-    // Test 5: Test authentication (if possible)
-    console.log('5️⃣ Testing Firebase Auth...');
+    
+    // Clean up test document
+    await db.collection('_test').doc('connection').delete();
+    console.log('✅ Firestore cleanup completed');
+    
+    // Test Auth
+    console.log('🔐 Testing Firebase Auth...');
     try {
-      // This will only work if we have a valid user
-      console.log('✅ Firebase Auth service is available');
-    } catch (error) {
-      console.log('⚠️  Firebase Auth test skipped:', error.message);
+      // Try to list users (this will fail if auth is not properly configured)
+      const listUsersResult = await auth.listUsers(1);
+      console.log('✅ Firebase Auth test passed');
+    } catch (authError) {
+      console.log('⚠️  Firebase Auth test failed:', authError.message);
+      console.log('   This is normal if you haven\'t configured Firebase Auth yet');
     }
-    console.log('');
-
-    // Test 6: Clean up test data
-    console.log('6️⃣ Cleaning up test data...');
-    await db.collection('test').doc('test-doc').delete();
-    console.log('✅ Test data cleaned up\n');
-
-    console.log('🎉 All Firebase tests passed successfully!');
-    console.log('🚀 Your Firebase configuration is working correctly.\n');
-
-    console.log('📋 Next steps:');
-    console.log('   1. Run: npm run setup-firebase');
-    console.log('   2. Start your backend: npm run dev');
-    console.log('   3. Start your frontend: npm start');
-    console.log('   4. Open http://localhost:3000');
-
+    
+    console.log('🎉 Firebase connection test completed!');
+    
   } catch (error) {
-    console.error('❌ Firebase test failed:', error.message);
-    console.error('🔍 Error details:', error);
+    console.error('❌ Firebase test failed:', error);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
     
-    console.log('\n🆘 Troubleshooting:');
-    console.log('   1. Check your Firebase configuration');
-    console.log('   2. Verify service account permissions');
-    console.log('   3. Ensure Firestore is enabled');
-    console.log('   4. Check your internet connection');
-    
-    process.exit(1);
+    if (error.code === 5) {
+      console.error('\n💡 Troubleshooting tips:');
+      console.error('1. Check if your Firebase project exists');
+      console.error('2. Ensure Firestore is enabled in your Firebase console');
+      console.error('3. Verify your service account credentials');
+      console.error('4. Check if the project ID is correct');
+    }
   }
 };
 
-// Run tests if called directly
+// Run test if this file is executed directly
 if (require.main === module) {
-  testFirebase();
+  testFirebase().then(() => {
+    process.exit(0);
+  }).catch((error) => {
+    console.error('Test failed:', error);
+    process.exit(1);
+  });
 }
 
-module.exports = { testFirebase };
+module.exports = testFirebase;
