@@ -6,13 +6,13 @@ import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBFah3hczu8sTbVyczh5S9TwV3hY52TMpk",
-  authDomain: "trego-landing-page.firebaseapp.com",
-  projectId: "trego-landing-page",
-  storageBucket: "trego-landing-page.firebasestorage.app",
-  messagingSenderId: "7912729022",
-  appId: "1:7912729022:web:1821c2413f1fee814e31ef",
-  measurementId: "G-JNMY9JH91M"
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "AIzaSyBFah3hczu8sTbVyczh5S9TwV3hY52TMpk",
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "trego-landing-page.firebaseapp.com",
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "trego-landing-page",
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "trego-landing-page.firebasestorage.app",
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "7912729022",
+  appId: process.env.REACT_APP_FIREBASE_APP_ID || "1:7912729022:web:1821c2413f1fee814e31ef",
+  measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID || "G-JNMY9JH91M"
 };
 
 // Initialize Firebase

@@ -108,24 +108,6 @@ const Register = () => {
             </div>
 
 
-            {/* Role */}
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-300 mb-2">
-                {t('form.role')}
-              </label>
-              <select
-                {...register('role', { required: 'Rôle requis' })}
-                className="block w-full px-3 py-3 border border-gray-600 rounded-lg bg-dark-700 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              >
-                <option value="">Sélectionner un rôle</option>
-                <option value="admin">Administrateur</option>
-                <option value="deliverer">Livreur</option>
-                <option value="client">Client</option>
-              </select>
-              {errors.role && (
-                <p className="mt-1 text-sm text-red-400">{errors.role.message}</p>
-              )}
-            </div>
 
             {/* Password */}
             <div>

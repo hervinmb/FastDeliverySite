@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }) => {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           displayName: firebaseUser.displayName || userData.displayName,
-          role: userData.role || 'client',
+          role: 'user', // Default role for all users
           isActive: userData.isActive !== false,
           createdAt: userData.createdAt,
           lastLoginAt: new Date()
@@ -64,7 +64,7 @@ export const AuthProvider = ({ children }) => {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
           displayName: firebaseUser.displayName || 'Utilisateur',
-          role: 'client',
+          role: 'user', // Default role for all users
           isActive: true,
           createdAt: new Date(),
           lastLoginAt: new Date()
@@ -117,7 +117,7 @@ export const AuthProvider = ({ children }) => {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         displayName: userData.displayName || 'Utilisateur',
-        role: userData.role || 'client',
+        role: 'user', // Default role for all users - no admin needed
         isActive: true,
         createdAt: new Date(),
         lastLoginAt: null
@@ -220,7 +220,7 @@ export const AuthProvider = ({ children }) => {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
               displayName: firebaseUser.displayName || userData.displayName,
-              role: userData.role || 'client',
+              role: 'user', // Default role for all users
               isActive: userData.isActive !== false,
               createdAt: userData.createdAt,
               lastLoginAt: userData.lastLoginAt
@@ -232,7 +232,7 @@ export const AuthProvider = ({ children }) => {
               uid: firebaseUser.uid,
               email: firebaseUser.email,
               displayName: firebaseUser.displayName || 'Utilisateur',
-              role: 'client',
+              role: 'user', // Default role for all users
               isActive: true,
               createdAt: new Date(),
               lastLoginAt: null
@@ -250,7 +250,7 @@ export const AuthProvider = ({ children }) => {
                 uid: firebaseUser.uid,
                 email: firebaseUser.email,
                 displayName: firebaseUser.displayName || 'Utilisateur',
-                role: 'client',
+                role: 'user', // Default role for all users
                 isActive: true,
                 createdAt: new Date(),
                 lastLoginAt: null

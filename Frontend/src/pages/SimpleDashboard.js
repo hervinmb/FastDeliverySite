@@ -125,15 +125,35 @@ const SimpleDashboard = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'delivered':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
+        return (
+          <div className="p-2 rounded-full bg-gradient-to-r from-green-100 to-green-200 shadow-lg">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+          </div>
+        );
       case 'in-transit':
-        return <Truck className="h-5 w-5 text-orange-500" />;
+        return (
+          <div className="p-2 rounded-full bg-gradient-to-r from-orange-100 to-orange-200 shadow-lg">
+            <Truck className="h-5 w-5 text-orange-600" />
+          </div>
+        );
       case 'pending':
-        return <Clock className="h-5 w-5 text-yellow-500" />;
+        return (
+          <div className="p-2 rounded-full bg-gradient-to-r from-yellow-100 to-yellow-200 shadow-lg">
+            <Clock className="h-5 w-5 text-yellow-600" />
+          </div>
+        );
       case 'cancelled':
-        return <AlertCircle className="h-5 w-5 text-red-500" />;
+        return (
+          <div className="p-2 rounded-full bg-gradient-to-r from-red-100 to-red-200 shadow-lg">
+            <AlertCircle className="h-5 w-5 text-red-600" />
+          </div>
+        );
       default:
-        return <AlertCircle className="h-5 w-5 text-gray-500" />;
+        return (
+          <div className="p-2 rounded-full bg-gradient-to-r from-gray-100 to-gray-200 shadow-lg">
+            <AlertCircle className="h-5 w-5 text-gray-600" />
+          </div>
+        );
     }
   };
 
@@ -149,6 +169,35 @@ const SimpleDashboard = () => {
         return 'annulée';
       default:
         return 'mise à jour';
+    }
+  };
+
+  const getActivityGradient = (index) => {
+    const gradients = [
+      'bg-gradient-to-r from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100',
+      'bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100',
+      'bg-gradient-to-r from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100',
+      'bg-gradient-to-r from-orange-50 to-yellow-50 hover:from-orange-100 hover:to-yellow-100',
+      'bg-gradient-to-r from-cyan-50 to-blue-50 hover:from-cyan-100 hover:to-blue-100',
+      'bg-gradient-to-r from-rose-50 to-pink-50 hover:from-rose-100 hover:to-pink-100',
+      'bg-gradient-to-r from-violet-50 to-purple-50 hover:from-violet-100 hover:to-purple-100',
+      'bg-gradient-to-r from-teal-50 to-green-50 hover:from-teal-100 hover:to-green-100'
+    ];
+    return gradients[index % gradients.length];
+  };
+
+  const getStatusBadgeStyle = (status) => {
+    switch (status) {
+      case 'delivered':
+        return 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300';
+      case 'in-transit':
+        return 'bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border border-orange-300';
+      case 'pending':
+        return 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border border-yellow-300';
+      case 'cancelled':
+        return 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300';
+      default:
+        return 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border border-gray-300';
     }
   };
 
@@ -320,40 +369,50 @@ const SimpleDashboard = () => {
           </h2>
           {recentDeliveries.length > 0 ? (
             <div className="space-y-4">
-              {recentDeliveries.map((delivery) => (
-                <div key={delivery.id} className="flex items-center p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:shadow-md transition-all duration-200 border border-gray-200">
+              {recentDeliveries.map((delivery, index) => (
+                <div key={delivery.id} className={`flex items-center p-4 ${getActivityGradient(index)} rounded-xl hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border border-gray-200`}>
                   <div className="flex-shrink-0">
                     {getStatusIcon(delivery.status)}
                   </div>
                   <div className="ml-4 flex-1">
-                    <p className="text-sm font-semibold text-gray-900">
-                      Livraison #{delivery.serialNumber || 'N/A'} {getStatusText(delivery.status)}
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Client: {delivery.clientName} • {getTimeAgo(delivery.updatedAt || delivery.createdAt)}
+                    <div className="flex items-center space-x-2 mb-1">
+                      <p className="text-sm font-bold text-gray-900">
+                        Livraison #{delivery.serialNumber || 'N/A'}
+                      </p>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeStyle(delivery.status)}`}>
+                        {getStatusText(delivery.status)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-700 font-medium">
+                      👤 {delivery.clientName} • {getTimeAgo(delivery.updatedAt || delivery.createdAt)}
                     </p>
                     {delivery.destination && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        📍 {delivery.destination}
+                      <p className="text-xs text-gray-600 mt-1 flex items-center">
+                        <span className="mr-1">📍</span>
+                        <span className="truncate">{delivery.destination}</span>
                       </p>
                     )}
                   </div>
                   <div className="flex-shrink-0 text-right">
-                    <p className="text-sm font-medium text-gray-900">
-                      GNF {Number(delivery.deliveryFees || 0).toFixed(2)}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      {delivery.numberOfItems} article{delivery.numberOfItems > 1 ? 's' : ''}
-                    </p>
+                    <div className="bg-gradient-to-r from-green-100 to-green-200 rounded-lg px-3 py-2 shadow-sm">
+                      <p className="text-sm font-bold text-green-700">
+                        GNF {Number(delivery.deliveryFees || 0).toFixed(2)}
+                      </p>
+                      <p className="text-xs text-green-600 font-medium">
+                        {delivery.numberOfItems} article{delivery.numberOfItems > 1 ? 's' : ''}
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8">
-              <Truck className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 text-lg font-medium">Aucune activité récente</p>
-              <p className="text-gray-400 text-sm mt-2">Les nouvelles livraisons apparaîtront ici</p>
+            <div className="text-center py-12 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+              <div className="p-4 rounded-full bg-gradient-to-r from-gray-200 to-gray-300 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <Truck className="h-8 w-8 text-gray-500" />
+              </div>
+              <p className="text-gray-600 text-lg font-semibold">Aucune activité récente</p>
+              <p className="text-gray-500 text-sm mt-2">Les nouvelles livraisons apparaîtront ici avec de beaux gradients</p>
             </div>
           )}
         </div>
