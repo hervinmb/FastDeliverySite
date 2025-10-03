@@ -2,13 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "Backend/package.json",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["Backend/**"]
-      }
-    },
-    {
       "src": "Frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
@@ -17,10 +10,6 @@
     }
   ],
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/Backend/simple-server.js"
-    },
     {
       "src": "/static/(.*)",
       "headers": {
@@ -31,8 +20,5 @@
       "src": "/(.*)",
       "dest": "/Frontend/index.html"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
