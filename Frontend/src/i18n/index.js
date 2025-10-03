@@ -14,6 +14,7 @@ const resources = {
         login: "Login",
         register: "Register"
       },
+      // Navigation
       // Table Headers
       tableHeaders: {
         clients: "CLIENTS",
