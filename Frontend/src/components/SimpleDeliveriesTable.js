@@ -56,6 +56,40 @@ const SimpleDeliveriesTable = () => {
     return maxSerial + 1;
   };
 
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'assigned':
+        return 'bg-blue-100 text-blue-800';
+      case 'in-transit':
+        return 'bg-orange-100 text-orange-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case 'pending':
+        return 'En attente';
+      case 'assigned':
+        return 'Assigné';
+      case 'in-transit':
+        return 'En transit';
+      case 'delivered':
+        return 'Livré';
+      case 'cancelled':
+        return 'Annulé';
+      default:
+        return status;
+    }
+  };
+
 
   const handleAdd = () => {
     setEditingDelivery(null);
@@ -305,20 +339,35 @@ const SimpleDeliveriesTable = () => {
                       </div>
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="flex-shrink-0 h-8 w-8">
-                          <div className="h-8 w-8 rounded-full bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
-                            <span className="text-white font-bold text-xs">
-                              {delivery.delivererName.charAt(0).toUpperCase()}
-                            </span>
+                      {delivery.delivererName ? (
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-8 w-8">
+                            <div className="h-8 w-8 rounded-full bg-gradient-to-r from-orange-400 to-red-500 flex items-center justify-center">
+                              <span className="text-white font-bold text-xs">
+                                {delivery.delivererName.charAt(0).toUpperCase()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-900">
+                              {delivery.delivererName}
+                            </div>
                           </div>
                         </div>
-                        <div className="ml-3">
-                          <div className="text-sm font-medium text-gray-900">
-                            {delivery.delivererName}
+                      ) : (
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-8 w-8">
+                            <div className="h-8 w-8 rounded-full bg-gradient-to-r from-gray-400 to-gray-500 flex items-center justify-center">
+                              <span className="text-white font-bold text-xs">?</span>
+                            </div>
+                          </div>
+                          <div className="ml-3">
+                            <div className="text-sm font-medium text-gray-500 italic">
+                              Non Assigné
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      )}
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap">
                       <div className="text-sm font-bold text-blue-600 bg-blue-50 rounded-lg px-3 py-2 inline-block">
@@ -327,7 +376,7 @@ const SimpleDeliveriesTable = () => {
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(delivery.status)} shadow-sm`}>
-                        {delivery.status}
+                        {getStatusText(delivery.status)}
                       </span>
                     </td>
                     <td className="px-6 py-5 whitespace-nowrap text-right text-sm font-medium">

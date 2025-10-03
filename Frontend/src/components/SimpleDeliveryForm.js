@@ -14,7 +14,7 @@ const SimpleDeliveryForm = ({ delivery, onClose, onSuccess }) => {
     totalGoodsPrice: delivery?.totalGoodsPrice || '',
     deliveryFees: delivery?.deliveryFees || '',
     numberOfItems: delivery?.numberOfItems || 1,
-    status: delivery?.status || 'pending',
+    status: delivery?.status || (delivery?.delivererName ? 'assigned' : 'pending'),
     notes: delivery?.notes || ''
   });
 
@@ -32,8 +32,8 @@ const SimpleDeliveryForm = ({ delivery, onClose, onSuccess }) => {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Validate required fields
-      if (!formData.clientName || !formData.delivererName || !formData.destination) {
+      // Validate required fields (driver name is now optional)
+      if (!formData.clientName || !formData.destination) {
         toast.error('Veuillez remplir tous les champs obligatoires');
         return;
       }
@@ -84,7 +84,7 @@ const SimpleDeliveryForm = ({ delivery, onClose, onSuccess }) => {
             {/* Deliverer Name */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom du Livreur *
+                Nom du Livreur (Optionnel)
               </label>
               <input
                 type="text"
@@ -92,8 +92,7 @@ const SimpleDeliveryForm = ({ delivery, onClose, onSuccess }) => {
                 value={formData.delivererName}
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white text-gray-900 placeholder-gray-500"
-                placeholder="Nom du livreur"
-                required
+                placeholder="Nom du livreur (peut être ajouté plus tard)"
               />
             </div>
 
@@ -139,7 +138,7 @@ const SimpleDeliveryForm = ({ delivery, onClose, onSuccess }) => {
                 onChange={handleInputChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white text-gray-900"
               >
-                <option value="pending">En attente</option>
+                <option value="pending">En attente (Non assigné)</option>
                 <option value="assigned">Assigné</option>
                 <option value="in-transit">En transit</option>
                 <option value="delivered">Livré</option>
