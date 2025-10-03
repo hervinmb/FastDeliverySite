@@ -4,7 +4,7 @@ import { X, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const SimpleDeliveryForm = ({ delivery, onClose, onSuccess }) => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     clientId: delivery?.clientId || '',

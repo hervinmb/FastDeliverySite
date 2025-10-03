@@ -9,8 +9,8 @@ import DeleteConfirmModal from './DeleteConfirmModal';
 const DeliverersTable = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingDeliverer, setEditingDeliverer] = useState(null);
+  // const [isFormOpen, setIsFormOpen] = useState(false);
+  // const [editingDeliverer, setEditingDeliverer] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, deliverer: null });
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');

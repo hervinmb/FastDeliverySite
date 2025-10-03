@@ -9,7 +9,7 @@ import {
 } from 'firebase/auth';
 import { db } from '../config/firebase';
 import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
-import axios from 'axios';
+// import axios from 'axios';
 import toast from 'react-hot-toast';
 
 const AuthContext = createContext();
