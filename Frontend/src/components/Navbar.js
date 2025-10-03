@@ -13,10 +13,6 @@ const Navbar = () => {
     logout();
   };
 
-  const changeLanguage = (lang) => {
-    // This would be implemented with i18next
-    console.log('Change language to:', lang);
-  };
 
   const isActive = (path) => {
     return location.pathname === path;

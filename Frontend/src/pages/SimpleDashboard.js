@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Truck, 
-  Users, 
-  UserCheck, 
   Clock,
   CheckCircle,
   AlertCircle,
