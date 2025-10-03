@@ -214,28 +214,6 @@ const SimpleDashboard = () => {
       changeType: 'positive'
     },
     {
-      title: 'Clients Actifs',
-      value: stats.activeClients.toString(),
-      icon: Users,
-      color: 'text-white',
-      bgColor: 'bg-gradient-to-br from-green-500 to-green-700',
-      iconBg: 'bg-gradient-to-br from-green-100 to-green-200',
-      iconColor: 'text-green-600',
-      change: '+8%',
-      changeType: 'positive'
-    },
-    {
-      title: 'Livreurs Disponibles',
-      value: stats.availableDeliverers.toString(),
-      icon: UserCheck,
-      color: 'text-white',
-      bgColor: 'bg-gradient-to-br from-purple-500 to-purple-700',
-      iconBg: 'bg-gradient-to-br from-purple-100 to-purple-200',
-      iconColor: 'text-purple-600',
-      change: '+5%',
-      changeType: 'positive'
-    },
-    {
       title: 'Revenus Totaux',
       value: `GNF ${stats.totalRevenue.toLocaleString()}`,
       icon: null,

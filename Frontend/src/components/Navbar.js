@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Brain, LogOut, Globe, Home, Package, Users, Truck, Menu, X } from 'lucide-react';
+import { Brain, LogOut, Home, Package, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   // const { t } = useTranslation();
@@ -79,50 +79,8 @@ const Navbar = () => {
               <Package className="h-5 w-5" />
               <span>Livraisons</span>
             </Link>
-            <Link
-              to="/clients"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/clients')
-                  ? 'bg-primary-600 text-white'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
-              }`}
-            >
-              <Users className="h-5 w-5" />
-              <span>Clients</span>
-            </Link>
-            <Link
-              to="/deliverers"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                isActive('/deliverers')
-                  ? 'bg-primary-600 text-white'
-                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
-              }`}
-            >
-              <Truck className="h-5 w-5" />
-              <span>Livreurs</span>
-            </Link>
           </nav>
 
-          {/* Language Switcher */}
-          <div className="px-4 py-4 border-t border-dark-700">
-            <div className="flex items-center justify-center space-x-4">
-              <Globe className="h-4 w-4 text-gray-400" />
-              <button
-                onClick={() => changeLanguage('en')}
-                className="text-sm text-gray-300 hover:text-white px-3 py-1 rounded transition-colors"
-              >
-                EN
-              </button>
-              <button
-                onClick={() => changeLanguage('fr')}
-                className="text-sm text-gray-300 hover:text-white px-3 py-1 rounded transition-colors"
-              >
-                FR
-              </button>
-            </div>
-          </div>
 
           {/* User Menu */}
           {user && (

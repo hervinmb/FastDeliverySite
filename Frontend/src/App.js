@@ -10,8 +10,6 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import SimpleDashboard from './pages/SimpleDashboard';
 import SimpleDeliveriesTable from './components/SimpleDeliveriesTable';
-import ClientsTable from './components/ClientsTable';
-import DeliverersTable from './components/DeliverersTable';
 
 // Context
 import { AuthProvider, useAuth } from './contexts/AuthContext';
@@ -124,28 +122,6 @@ function App() {
                     <Navbar />
                     <div className="lg:ml-64 min-h-screen bg-gray-50 pt-16 lg:pt-0">
                       <SimpleDeliveriesTable />
-                    </div>
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/clients" 
-                element={
-                  <ProtectedRoute>
-                    <Navbar />
-                    <div className="lg:ml-64 min-h-screen bg-gray-50 pt-16 lg:pt-0">
-                      <ClientsTable />
-                    </div>
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/deliverers" 
-                element={
-                  <ProtectedRoute>
-                    <Navbar />
-                    <div className="lg:ml-64 min-h-screen bg-gray-50 pt-16 lg:pt-0">
-                      <DeliverersTable />
                     </div>
                   </ProtectedRoute>
                 } 
