@@ -95,9 +95,9 @@ const ClientsTable = () => {
 
         {/* Controls */}
         <div className="bg-dark-800 rounded-lg p-4 sm:p-6 mb-6">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-row gap-4 items-center">
             {/* Search */}
-            <div className="w-full">
+            <div className="flex-1">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
@@ -116,7 +116,7 @@ const ClientsTable = () => {
                 setEditingClient(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium w-full sm:w-auto"
+              className="flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium whitespace-nowrap"
             >
               <Plus className="h-5 w-5" />
               <span>{t('buttons.addNew')}</span>
