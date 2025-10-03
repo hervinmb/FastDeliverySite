@@ -4,9 +4,28 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy for Vercel deployment
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://localhost:3000'],
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = [
+      'http://localhost:3000',
+      'https://localhost:3000',
+      process.env.FRONTEND_URL,
+      process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null
+    ].filter(Boolean);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 app.use(express.json());
@@ -219,6 +238,32 @@ app.get('/api/deliverers', (req, res) => {
   });
 });
 
+// Root route handler
+app.get('/', (req, res) => {
+  console.log('Root route requested');
+  res.json({
+    message: 'LIVRAISON RAPIDE Backend API',
+    version: '1.0.0',
+    status: 'running',
+    endpoints: {
+      health: '/api/health',
+      test: '/api/test',
+      auth: {
+        register: 'POST /api/auth/register',
+        login: 'POST /api/auth/login'
+      },
+      deliveries: {
+        list: 'GET /api/deliveries',
+        create: 'POST /api/deliveries',
+        update: 'PUT /api/deliveries/:id',
+        delete: 'DELETE /api/deliveries/:id'
+      },
+      clients: 'GET /api/clients',
+      deliverers: 'GET /api/deliverers'
+    }
+  });
+});
+
 // 404 handler - this should be LAST
 app.use('*', (req, res) => {
   console.log('404 - Route not found:', req.method, req.originalUrl);
@@ -227,6 +272,7 @@ app.use('*', (req, res) => {
     method: req.method,
     path: req.originalUrl,
     availableRoutes: [
+      'GET /',
       'GET /api/health',
       'GET /api/test',
       'POST /api/auth/register',
