@@ -252,3 +252,4 @@ Your Firebase configuration is now complete! The LIVRAISON RAPIDE system should 
 - ✅ Mobile-responsive interface
 
 Start building your delivery management system! 🚚
+

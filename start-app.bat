@@ -45,3 +45,4 @@ echo    - Login with any email/password
 echo    - No Firebase connection required
 echo.
 pause
+

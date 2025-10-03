@@ -56,3 +56,4 @@ const requireRole = (roles) => {
 };
 
 module.exports = { authenticateToken, requireRole };
+

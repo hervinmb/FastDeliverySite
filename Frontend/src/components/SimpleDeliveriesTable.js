@@ -389,3 +389,4 @@ const SimpleDeliveriesTable = () => {
 };
 
 export default SimpleDeliveriesTable;
+

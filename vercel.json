@@ -1,0 +1,35 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "Backend/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "Frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/Backend/server.js"
+    },
+    {
+      "src": "/static/(.*)",
+      "headers": {
+        "cache-control": "s-maxage=31536000,immutable"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/Frontend/index.html"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
