@@ -2,8 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "Backend/simple-server.js",
-      "use": "@vercel/node"
+      "src": "Backend/package.json",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["Backend/**"]
+      }
     },
     {
       "src": "Frontend/package.json",

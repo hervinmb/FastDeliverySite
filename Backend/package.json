@@ -2,9 +2,9 @@
   "name": "trego-backend",
   "version": "1.0.0",
   "description": "Backend API for LIVRAISON RAPIDE delivery management system",
-  "main": "server.js",
+  "main": "simple-server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node simple-server.js",
     "dev": "nodemon server.js",
     "test": "jest",
     "setup-firebase": "node scripts/setup-firebase.js",
