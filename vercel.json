@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "Backend/server.js",
+      "src": "Backend/simple-server.js",
       "use": "@vercel/node"
     },
     {
@@ -16,7 +16,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/Backend/server.js"
+      "dest": "/Backend/simple-server.js"
     },
     {
       "src": "/static/(.*)",
