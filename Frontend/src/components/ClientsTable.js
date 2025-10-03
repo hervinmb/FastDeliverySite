@@ -9,8 +9,8 @@ import DeleteConfirmModal from './DeleteConfirmModal';
 const ClientsTable = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
-  // const [isFormOpen, setIsFormOpen] = useState(false);
-  // const [editingClient, setEditingClient] = useState(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingClient, setEditingClient] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, client: null });
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
