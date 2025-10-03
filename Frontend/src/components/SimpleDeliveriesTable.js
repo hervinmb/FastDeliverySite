@@ -167,22 +167,6 @@ const SimpleDeliveriesTable = () => {
     setEditingDelivery(null);
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border border-yellow-300';
-      case 'assigned':
-        return 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border border-blue-300';
-      case 'in-transit':
-        return 'bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border border-orange-300';
-      case 'delivered':
-        return 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border border-green-300';
-      case 'cancelled':
-        return 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300';
-      default:
-        return 'bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border border-gray-300';
-    }
-  };
 
   const getRowGradient = (index) => {
     const gradients = [
