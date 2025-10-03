@@ -39,6 +39,7 @@ const resources = {
         filter: "Filter",
         clear: "Clear"
       },
+      // Filters
       // Messages
       messages: {
         loginSuccess: "Login successful",
