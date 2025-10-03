@@ -9,7 +9,9 @@ import DeleteConfirmModal from './DeleteConfirmModal';
 const DeliverersTable = () => {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  // eslint-disable-next-line no-unused-vars
   const [isFormOpen, setIsFormOpen] = useState(false);
+  // eslint-disable-next-line no-unused-vars
   const [editingDeliverer, setEditingDeliverer] = useState(null);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, deliverer: null });
   const [searchTerm, setSearchTerm] = useState('');

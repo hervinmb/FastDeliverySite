@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { X, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 
