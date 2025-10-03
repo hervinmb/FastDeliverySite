@@ -111,7 +111,9 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <SimpleDashboard />
+                    <div className="lg:ml-64 min-h-screen bg-gray-50">
+                      <SimpleDashboard />
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -120,7 +122,9 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <SimpleDeliveriesTable />
+                    <div className="lg:ml-64 min-h-screen bg-gray-50">
+                      <SimpleDeliveriesTable />
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -129,7 +133,9 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <ClientsTable />
+                    <div className="lg:ml-64 min-h-screen bg-gray-50">
+                      <ClientsTable />
+                    </div>
                   </ProtectedRoute>
                 } 
               />
@@ -138,7 +144,9 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <DeliverersTable />
+                    <div className="lg:ml-64 min-h-screen bg-gray-50">
+                      <DeliverersTable />
+                    </div>
                   </ProtectedRoute>
                 } 
               />

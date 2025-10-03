@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
-import { Brain, LogOut, Globe, Home, Package, Users, Truck } from 'lucide-react';
+import { Brain, LogOut, Globe, Home, Package, Users, Truck, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -22,13 +23,30 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <nav className="bg-dark-800 border-b border-dark-700">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <>
+      {/* Mobile menu button */}
+      <div className="lg:hidden fixed top-4 left-4 z-50">
+        <button
+          onClick={toggleMobileMenu}
+          className="bg-dark-800 text-white p-2 rounded-md hover:bg-dark-700 transition-colors"
+        >
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {/* Sidebar */}
+      <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-dark-800 transform transition-transform duration-300 ease-in-out ${
+        isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0`}>
+        <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
+          <div className="flex items-center justify-center h-16 px-4 border-b border-dark-700">
+            <div className="flex items-center">
               <Brain className="h-8 w-8 text-primary-500" />
               <span className="ml-2 text-xl font-bold text-white">
                 LIVRAISON RAPIDE
@@ -37,101 +55,106 @@ const Navbar = () => {
           </div>
 
           {/* Navigation Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <nav className="flex-1 px-4 py-6 space-y-2">
             <Link
               to="/dashboard"
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 isActive('/dashboard')
                   ? 'bg-primary-600 text-white'
                   : 'text-gray-300 hover:text-white hover:bg-gray-700'
               }`}
             >
-              <Home className="h-4 w-4" />
+              <Home className="h-5 w-5" />
               <span>Dashboard</span>
             </Link>
             <Link
               to="/deliveries"
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 isActive('/deliveries')
                   ? 'bg-primary-600 text-white'
                   : 'text-gray-300 hover:text-white hover:bg-gray-700'
               }`}
             >
-              <Package className="h-4 w-4" />
+              <Package className="h-5 w-5" />
               <span>Livraisons</span>
             </Link>
             <Link
               to="/clients"
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 isActive('/clients')
                   ? 'bg-primary-600 text-white'
                   : 'text-gray-300 hover:text-white hover:bg-gray-700'
               }`}
             >
-              <Users className="h-4 w-4" />
+              <Users className="h-5 w-5" />
               <span>Clients</span>
             </Link>
             <Link
               to="/deliverers"
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                 isActive('/deliverers')
                   ? 'bg-primary-600 text-white'
                   : 'text-gray-300 hover:text-white hover:bg-gray-700'
               }`}
             >
-              <Truck className="h-4 w-4" />
+              <Truck className="h-5 w-5" />
               <span>Livreurs</span>
             </Link>
-          </div>
+          </nav>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden">
-            <button
-              type="button"
-              className="text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              Menu
-            </button>
-          </div>
-
-          {/* Navigation Items */}
-          <div className="flex items-center space-x-4">
-            {/* Language Switcher */}
-            <div className="flex items-center space-x-2">
+          {/* Language Switcher */}
+          <div className="px-4 py-4 border-t border-dark-700">
+            <div className="flex items-center justify-center space-x-4">
               <Globe className="h-4 w-4 text-gray-400" />
               <button
                 onClick={() => changeLanguage('en')}
-                className="text-sm text-gray-300 hover:text-white px-2 py-1 rounded"
+                className="text-sm text-gray-300 hover:text-white px-3 py-1 rounded transition-colors"
               >
                 EN
               </button>
               <button
                 onClick={() => changeLanguage('fr')}
-                className="text-sm text-gray-300 hover:text-white px-2 py-1 rounded"
+                className="text-sm text-gray-300 hover:text-white px-3 py-1 rounded transition-colors"
               >
                 FR
               </button>
             </div>
+          </div>
 
-            {/* User Menu */}
-            {user && (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-300">
-                  {user.displayName || user.email}
-                </span>
+          {/* User Menu */}
+          {user && (
+            <div className="px-4 py-4 border-t border-dark-700">
+              <div className="flex items-center space-x-3">
+                <div className="flex-1">
+                  <p className="text-sm text-gray-300 truncate">
+                    {user.displayName || user.email}
+                  </p>
+                </div>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center space-x-1 text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md hover:bg-dark-700 transition-colors"
+                  className="flex items-center space-x-2 text-sm text-gray-300 hover:text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
-                  <span>{t('nav.logout')}</span>
+                  <span className="hidden sm:inline">Déconnexion</span>
                 </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
-    </nav>
+
+      {/* Mobile overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+    </>
   );
 };
 
