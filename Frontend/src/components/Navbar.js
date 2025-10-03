@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { Brain, LogOut, Globe, Home, Package, Users, Truck, Menu, X } from 'lucide-react';
 
 const Navbar = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const { user, logout } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
