@@ -84,20 +84,20 @@ const ClientsTable = () => {
     <div className="min-h-screen bg-dark-900 p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">
+        <div className="mb-8 pt-4 lg:pt-0">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2 pl-16 lg:pl-0">
             {t('nav.clients')}
           </h1>
-          <p className="text-gray-400">
+          <p className="text-gray-400 pl-16 lg:pl-0">
             Gérez vos clients et leurs informations
           </p>
         </div>
 
         {/* Controls */}
-        <div className="bg-dark-800 rounded-lg p-6 mb-6">
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+        <div className="bg-dark-800 rounded-lg p-4 sm:p-6 mb-6">
+          <div className="flex flex-col gap-4">
             {/* Search */}
-            <div className="flex flex-col sm:flex-row gap-4 flex-1">
+            <div className="w-full">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <input
@@ -105,7 +105,7 @@ const ClientsTable = () => {
                   placeholder={t('placeholders.searchClients')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-dark-700 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full sm:w-64"
+                  className="pl-10 pr-4 py-3 bg-dark-700 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent w-full"
                 />
               </div>
             </div>
@@ -116,7 +116,7 @@ const ClientsTable = () => {
                 setEditingClient(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg transition-colors duration-200 font-medium"
+              className="flex items-center justify-center space-x-2 bg-primary-600 hover:bg-primary-700 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium w-full sm:w-auto"
             >
               <Plus className="h-5 w-5" />
               <span>{t('buttons.addNew')}</span>

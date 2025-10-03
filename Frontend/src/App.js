@@ -111,7 +111,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <div className="lg:ml-64 min-h-screen bg-gray-50">
+                    <div className="lg:ml-64 min-h-screen bg-gray-50 pt-16 lg:pt-0">
                       <SimpleDashboard />
                     </div>
                   </ProtectedRoute>
@@ -122,7 +122,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <div className="lg:ml-64 min-h-screen bg-gray-50">
+                    <div className="lg:ml-64 min-h-screen bg-gray-50 pt-16 lg:pt-0">
                       <SimpleDeliveriesTable />
                     </div>
                   </ProtectedRoute>
@@ -133,7 +133,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <div className="lg:ml-64 min-h-screen bg-gray-50">
+                    <div className="lg:ml-64 min-h-screen bg-gray-50 pt-16 lg:pt-0">
                       <ClientsTable />
                     </div>
                   </ProtectedRoute>
@@ -144,7 +144,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Navbar />
-                    <div className="lg:ml-64 min-h-screen bg-gray-50">
+                    <div className="lg:ml-64 min-h-screen bg-gray-50 pt-16 lg:pt-0">
                       <DeliverersTable />
                     </div>
                   </ProtectedRoute>

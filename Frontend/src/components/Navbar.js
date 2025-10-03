@@ -32,9 +32,9 @@ const Navbar = () => {
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <button
           onClick={toggleMobileMenu}
-          className="bg-dark-800 text-white p-2 rounded-md hover:bg-dark-700 transition-colors"
+          className="bg-dark-800 text-white p-3 rounded-md hover:bg-dark-700 transition-colors shadow-lg"
         >
-          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
