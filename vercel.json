@@ -1,24 +1,6 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "Frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/static/(.*)",
-      "headers": {
-        "cache-control": "s-maxage=31536000,immutable"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/Frontend/index.html"
-    }
-  ]
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "Frontend/build",
+  "installCommand": "npm run install-all"
 }
