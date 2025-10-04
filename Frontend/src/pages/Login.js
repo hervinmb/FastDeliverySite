@@ -23,6 +23,7 @@ const Login = () => {
       await login(data.email, data.password);
     } catch (error) {
       // Error is handled in the context
+      //jkaldhlasd
     } finally {
       setIsLoading(false);
     }
