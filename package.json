@@ -2,29 +2,12 @@
   "name": "trego-livraison-rapide",
   "version": "1.0.0",
   "description": "LIVRAISON RAPIDE - Rapid Delivery Management System",
-  "main": "Backend/server.js",
   "scripts": {
-    "build": "cd Frontend && npm run build",
-    "start": "cd Backend && npm start",
-    "dev": "concurrently \"cd Backend && npm run dev\" \"cd Frontend && npm start\"",
-    "install-all": "npm install && cd Backend && npm install && cd ../Frontend && npm install",
-    "vercel-build": "cd Frontend && npm run build"
-  },
-  "keywords": [
-    "delivery",
-    "management",
-    "react",
-    "nodejs",
-    "firebase",
-    "express"
-  ],
-  "author": "Trego Team",
-  "license": "MIT",
-  "devDependencies": {
-    "concurrently": "^8.2.2"
+    "build": "cd Frontend && npm install && npm run build",
+    "dev": "cd Frontend && npm start",
+    "install": "cd Frontend && npm install"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": "18.x"
   }
 }
